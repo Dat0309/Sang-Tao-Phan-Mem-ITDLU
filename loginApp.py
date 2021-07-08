@@ -35,7 +35,7 @@ class myApp(QtWidgets.QWidget, Ui_Form):
         #print(usersname, password)
         self.query.exec_("select * from userdata where username = '%s' and pass = '%s';"%(usersname, password))
         self.query.first()
-        if self.query.value("username") != None and self.query.value("pass") != None:
+        if self.query.value("username") != None and self.query.value("pass") !=None:
             print("Longin success!!!")
             self.refreshAll()
             print(self.Videocapture_)
@@ -48,20 +48,41 @@ class myApp(QtWidgets.QWidget, Ui_Form):
     def addUser(self):
         usersname = self.userCreate.text()
         password = self.passCreate.text()
+        confirm_pass = self.cpassCreate.text()
         #print(usersname, password)
         self.query.exec_("select * from userdata where username = '%s' and pass = '%s';"%(usersname,password))
         self.query.first()
 
-        if self.query.value("username") !=None and self.query.value("pass") !=None:
-            self.err_create()
-        else: 
+        if self.query.value("username") == None and len(password) != 0 and confirm_pass == password and len(confirm_pass) !=0:
             self.query.exec_("insert into userdata (username, pass) values('%s', '%s');"%(usersname,password))
             self.succ()
+        if self.query.value("username") !=None and self.query.value("pass") !=None:
+            self.err_create()       
+        if len(password) == 0 :
+            self.err_pass()
+        if confirm_pass != password :
+            self.err_confirm_pass()   
 
     def err_create(self):
         mess = QMessageBox()
         mess.setWindowTitle("Error")
         mess.setText("Your user name is already exist!")
+        mess.setIcon(QMessageBox.Warning)
+        mess.setStandardButtons(QMessageBox.Retry)
+        x = mess.exec_()
+
+    def err_pass(self):
+        mess = QMessageBox()
+        mess.setWindowTitle("Error")
+        mess.setText("Plese enter the password!")
+        mess.setIcon(QMessageBox.Warning)
+        mess.setStandardButtons(QMessageBox.Retry)
+        x = mess.exec_()
+
+    def err_confirm_pass(self):
+        mess = QMessageBox()
+        mess.setWindowTitle("Error")
+        mess.setText("confitm password is diferent of your password!")
         mess.setIcon(QMessageBox.Warning)
         mess.setStandardButtons(QMessageBox.Retry)
         x = mess.exec_()
