@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icon">
+    <file>icons/left-arrow-angle-big-gross-symbol_icon-icons.com_73003.svg</file>
     <file>icons/camera.svg</file>
     <file>icons/eye.svg</file>
     <file>icons/home.svg</file>
