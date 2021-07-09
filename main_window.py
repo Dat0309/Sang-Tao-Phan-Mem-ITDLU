@@ -6,8 +6,8 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1287, 831)
-        #MainWindow.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-        #MainWindow.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        MainWindow.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        MainWindow.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
 
         MainWindow.setStyleSheet("border:none;\n"
@@ -499,11 +499,6 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.footer, 0, QtCore.Qt.AlignBottom)
         self.horizontalLayout.addWidget(self.mainBody)
         MainWindow.setCentralWidget(self.centralwidget)
-
-        self.mainBody.setGraphicsEffect(QtWidgets.QGraphicsDropShadowEffect(blurRadius=25, xOffset=0, yOffset=0))
-        self.menuBtn.setGraphicsEffect(QtWidgets.QGraphicsDropShadowEffect(blurRadius=25, xOffset=5, yOffset=5))
-        self.centralwidget.setGraphicsEffect(QtWidgets.QGraphicsDropShadowEffect(blurRadius=25, xOffset=0, yOffset=0))
-        self.slideMenu.setGraphicsEffect(QtWidgets.QGraphicsDropShadowEffect(blurRadius=25, xOffset=0, yOffset=0))
 
 
         self.retranslateUi(MainWindow)

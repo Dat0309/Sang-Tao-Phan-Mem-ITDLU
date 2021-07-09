@@ -1,7 +1,7 @@
 from PyQt5 import QtSql, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 from loginUI import Ui_Form
-from outwindow import UI_outDialog
+from output_window import MainWindow
 import sys
 
 class myApp(QtWidgets.QWidget, Ui_Form):
@@ -38,7 +38,7 @@ class myApp(QtWidgets.QWidget, Ui_Form):
         if self.query.value("username") != None and self.query.value("pass") !=None:
             print("Longin success!!!")
             self.refreshAll()
-            print(self.Videocapture_)
+            #print(self.Videocapture_)
             Form.hide()
             self.outputwindow_()
         else:
@@ -115,7 +115,7 @@ class myApp(QtWidgets.QWidget, Ui_Form):
 
 
     def outputwindow_(self):
-        self._new_window = UI_outDialog()
+        self._new_window = MainWindow()
         self._new_window.show()
         
 
