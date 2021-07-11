@@ -1,18 +1,59 @@
-from keras import activations
-from keras import callbacks
-from keras.backend import flatten
-import numpy as np
-from keras.models import Sequential
-from keras.layers import Dense,Activation,Flatten,Dropout
-from keras.layers import Conv2D,MaxPooling2D
-from keras.callbacks import ModelCheckpoint
-from numpy.core.defchararray import mod
-from sklearn.model_selection import train_test_split
-from sklearn.utils import validation
-from matplotlib import pyplot as plt
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.applications import MobileNetV2
+from tensorflow.keras.layers import AveragePooling2D
+from tensorflow.keras.layers import Dropout
+from tensorflow.keras.layers import Flatten
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Input
+from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+from tensorflow.keras.preprocessing.image import img_to_array
+from tensorflow.keras.preprocessing.image import load_img
+from tensorflow.keras.utils import to_categorical
+from sklearn.preprocessing import LabelBinarizer
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+from tensorflow.python.ops.gen_nn_ops import Conv2D
+from imutils import paths
+import matplotlib.pyplot as plt
+import numpy as np
+import os
 
+INIT_LR = 1e-4
 EPOCHS = 20
+BS = 32
+
+DIRECTORY = r"C:\Users\ADMIN\Face-Mask-Detection-master\Face-Mask-Detection-master\dataset"
+CATEGORIES = ["with_mask", "without_mask"]
+
+print("[INFO] loading images...")
+
+data = []
+labels = []
+
+for category in CATEGORIES:
+    path = os.path.join(DIRECTORY, category)
+    for img in os.listdir(path):
+    	img_path = os.path.join(path, img)
+    	image = load_img(img_path, target_size=(224, 224))
+    	image = img_to_array(image)
+    	image = preprocess_input(image)
+
+    	data.append(image)
+    	labels.append(category)
+
+# print(len(data))
+lb = LabelBinarizer()
+labels = lb.fit_transform(labels)
+labels = to_categorical(labels)
+
+data = np.array(data, dtype="float32")
+labels = np.array(labels)
+
+(trainX, testX, trainY, testY) = train_test_split(data, labels,test_size=0.20, stratify=labels, random_state=42)
+
+
 aug = ImageDataGenerator(
 	rotation_range=20,
 	zoom_range=0.15,
@@ -22,78 +63,64 @@ aug = ImageDataGenerator(
 	horizontal_flip=True,
 	fill_mode="nearest")
 
+baseModel = MobileNetV2(weights="imagenet", include_top=False, input_tensor=Input(shape=(224, 224, 3)))
+headModel = baseModel.output
+headModel = AveragePooling2D(pool_size=(7,7))(headModel)
+headModel = Flatten(name="flatten")(headModel)
+headModel = Dropout(0.5)(headModel)
+headModel = Dense(256, activation="relu")(headModel)
+headModel = Dense(128, activation="relu")(headModel)
+headModel = Dropout(0.5)(headModel)
+headModel = Dense(2, activation="softmax")(headModel)
 
-data = np.load('data.npy')
-target = np.load('target.npy')
+model = Model(inputs=baseModel.input, outputs=headModel)
 
-model = Sequential()
+# loop over all layers in the base model and freeze them so they will
+# *not* be updated during the first training process
+for layer in baseModel.layers:
+	layer.trainable = False
 
-#Trích lọc đặc trưng của ảnh
-#Lớp CNN đầu tiên, theo sau là các lớp Relu và MaxPooling
-model.add(Conv2D(200,(3,3),input_shape = data.shape[1:]))
-model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2,2)))
+# compile our model
+print("[INFO] compiling model...")
+opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
+model.compile(loss="binary_crossentropy", optimizer=opt,
+	metrics=["accuracy"])
 
-#Lớp thứ hai 
-model.add(Conv2D(100,(3,3)))
-model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2,2)))
+# train the head of the network
+print("[INFO] training head...")
+H = model.fit(
+	aug.flow(trainX, trainY, batch_size=BS),
+	steps_per_epoch=len(trainX) // BS,
+	validation_data=(testX, testY),
+	validation_steps=len(testX) // BS,
+	epochs=EPOCHS)
 
-#Làm phẳng lớp để xếp chồng output Convolution từ second convolution layer
-model.add(Flatten())
-model.add(Dropout(0.5))
+# make predictions on the testing set
+print("[INFO] evaluating network...")
+predIdxs = model.predict(testX, batch_size=BS)
 
-#Tạo lớp Dense gồm 50 neural
-model.add(Dense(50,activation='relu'))
-#Lớp cuối cùng với 2 output
-model.add(Dense(2,activation='softmax'))
+# for each image in the testing set we need to find the index of the
+# label with corresponding largest predicted probability
+predIdxs = np.argmax(predIdxs, axis=1)
 
-model.compile(loss='categorical_crossentropy',optimizer='adam', metrics=['accuracy'])
+# show a nicely formatted classification report
+print(classification_report(testY.argmax(axis=1), predIdxs,
+	target_names=lb.classes_))
 
-#Test
-train_data, test_data, train_target, test_target = train_test_split(data,target,test_size=0.1)
+# serialize the model to disk
+print("[INFO] saving mask detector model...")
+model.save("mask_detector2.model", save_format="h5")
 
-H = model.fit(  aug.flow(train_data,train_target, batch_size=32),
-                steps_per_epoch=len(train_data)//32,
-                validation_data=(test_data,test_target),
-                validation_steps=len(test_data)//32,
-                epochs=EPOCHS
-)
-
-print('Saving mask detector model...')
-model.save("mask_detectot.model",save_format="h5")
-
+# plot the training loss and accuracy
 N = EPOCHS
 plt.style.use("ggplot")
 plt.figure()
-plt.plot(np.arange(0,N), H.history["loss"], label = "train_loss")
-plt.plot(np.arange(0,N), H.history["val_loss"], label = "val_loss")
-plt.plot(np.arange(0,N), H.history["accuracy"], label = "train_acc")
-plt.plot(np.arange(0,N), H.history["val_accuracy"], label = "val_acc")
+plt.plot(np.arange(0, N), H.history["loss"], label="train_loss")
+plt.plot(np.arange(0, N), H.history["val_loss"], label="val_loss")
+plt.plot(np.arange(0, N), H.history["accuracy"], label="train_acc")
+plt.plot(np.arange(0, N), H.history["val_accuracy"], label="val_acc")
 plt.title("Training Loss and Accuracy")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
 plt.legend(loc="lower left")
 plt.savefig("plot.png")
-
-
-#checkpoint = ModelCheckpoint('model-{epoch:03d}.model',monitor='val_loss',verbose=0,save_best_only=True, mode = 'auto')
-#history = model.fit(train_data,train_target,epochs=20, callbacks=[checkpoint],validation_split=0.2)
-
-# plt.plot(history.history['loss'], 'r', label = 'training loss')
-# plt.plot(history.history['val_loss'], label = 'validation loss')
-# plt.xlabel('# epochs')
-# plt.ylabel('loss')
-# plt.legend()
-# plt.show()
-
-
-# plt.plot(history.history['accuracy'],'r',label='training accuracy')
-# plt.plot(history.history['val_accuracy'],label='validation accuracy')
-# plt.xlabel('# epochs')
-# plt.ylabel('loss')
-# plt.legend()
-# plt.show()
-
-
-print(model.evaluate(test_data,test_target))
