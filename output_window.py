@@ -48,7 +48,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def showMenubar(self):
         width = self.ui.slideMenu.width()
         if width == 0:
-            newWidth = 200
+            newWidth = 248
             self.ui.menuBtn.setIcon(QtGui.QIcon(u":/icon/icons/chevron-left.svg"))
         else:
             newWidth = 0
