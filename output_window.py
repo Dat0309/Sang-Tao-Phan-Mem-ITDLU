@@ -1,8 +1,13 @@
+import re
 from main_window import Ui_MainWindow
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys, icons
 from PySide2 import *
-from main_window import Ui_MainWindow
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+from tensorflow.keras.preprocessing.image import img_to_array
+from tensorflow.keras.models import load_model
+import numpy as np
+import cv2 as cv
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -19,11 +24,19 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.show()
 
+        self.ui.widget_main.hide()
+        self.logic = 0
+        self.value = 1
+
+        self.ui.show_main.clicked.connect(self.show_video)
+        self.ui.cap_main.clicked.connect(self.cap_video)
         self.ui.menuBtn.clicked.connect(self.showMenubar)
         self.ui.hideBtn.clicked.connect(self.showMinimized)
         self.ui.maxBtn.clicked.connect(self.restore_or_maximized_window)
         self.ui.xBtn.clicked.connect(self.close)
         self.ui.exitBtn.clicked.connect(self.close)
+        self.ui.showBtn.clicked.connect(self.showButton)
+        self.ui.homeBtn.clicked.connect(self.homeButton)
 
         def moveWindow(e):
             if self.isMaximized() == False:
@@ -60,6 +73,121 @@ class MainWindow(QtWidgets.QMainWindow):
         self.animation.setEndValue(newWidth)
         self.animation.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
         self.animation.start()
+
+    def showButton(self):
+        self.ui.widget.hide()
+        self.ui.widget_main.show()
+
+    def homeButton(self):
+        self.ui.widget_main.hide()
+        self.ui.widget.show()
+        
+    def show_video(self):
+        prototxt_path = r"face_detector\deploy.prototxt"
+        weightPath = r"face_detector\res10_300x300_ssd_iter_140000.caffemodel"
+        faceNet = cv.dnn.readNet(prototxt_path, weightPath)
+
+        maskNet = load_model("mask_detector2.model")
+
+        print("Starting Video...")
+        cap = cv.VideoCapture(0)
+
+        while True:
+            ret, frame = cap.read()
+
+            (locs, preds) = self.detect_predict_mask(frame, faceNet, maskNet)
+
+            for (box, pred) in zip(locs, preds):
+                (startX, startY, endX, endY) = box
+                (mask, withoutMask) = pred
+
+                label = "Mask" if mask > withoutMask else "No Mask"
+                color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
+
+                label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
+
+                cv.putText(frame, label, (startX, startY - 10), cv.FONT_HERSHEY_COMPLEX, 0.45,color, 2)
+                cv.rectangle(frame, (startX, startY), (endX, endY), color, 2)
+
+            if ret == True:
+                self.displayImage(frame, 1)
+
+                if (self.logic==2):
+                    break
+                    # self.value = self.value + 1
+                    # cv.imwrite('%s.png'%(self.value), frame)
+
+                    # self.logic = 1
+                
+                if cv.waitKey(1) & 0xFF == ord('q'):
+                    break
+                
+            else:
+                print("return not found")
+
+        cap.release()
+        cv.destroyAllWindows()
+
+    def displayImage(self, img, window = 1):
+        qformat = QtGui.QImage.Format_Indexed8
+
+        if len(img.shape) == 3:
+            if(img.shape[2]) == 4:
+                qformat = QtGui.QImage.Format_RGBA888
+
+            else:
+                qformat = QtGui.QImage.Format_RGB888
+
+        img = QtGui.QImage(img, img.shape[1], img.shape[0], qformat)
+        img = img.rgbSwapped()
+        #self.ui.label_4.setScaledContents(True)
+        self.ui.label_4.setPixmap(QtGui.QPixmap.fromImage(img))
+        self.ui.label_4.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+
+
+    def cap_video(self):
+        self.logic = 2
+
+    def detect_predict_mask(self, frame, faceNet, maskNet):
+        (h, w) = frame.shape[:2]
+        blob = cv.dnn.blobFromImage(frame, 1.0, (224, 224), (104.0, 177.0, 123.0))
+
+        faceNet.setInput(blob)
+        detections = faceNet.forward()
+        print(detections.shape)
+
+        faces = []
+        locs = []
+        preds = []
+
+        '''
+        Loop over dectections
+        '''
+        for i in range(0, detections.shape[2]):
+            confidence = detections[0, 0, i, 2]
+
+            if confidence > 0.5:
+                box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
+                (startX, startY, endX, endY) = box.astype("int")
+
+                (startX, startY) = (max(0, startX), max(0, startY))
+                (endX, endY) = (min(w-1, endX), min(h-1, endY))
+
+                face = frame[startY:endY, startX:endX]
+                face = cv.cvtColor(face, cv.COLOR_BGR2RGB)
+                face = cv.resize(face, (224, 224))
+                face = img_to_array(face)
+                face = preprocess_input(face)
+
+                faces.append(face)
+                locs.append((startX, startY, endX, endY))
+
+        if len(faces) > 0:
+            faces = np.array(faces, dtype="float32")
+            preds = maskNet.predict(faces, batch_size = 32)
+
+        return (locs, preds)
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
