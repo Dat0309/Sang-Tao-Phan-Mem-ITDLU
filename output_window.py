@@ -87,7 +87,7 @@ class MainWindow(QtWidgets.QMainWindow):
         weightPath = r"face_detector\res10_300x300_ssd_iter_140000.caffemodel"
         faceNet = cv.dnn.readNet(prototxt_path, weightPath)
 
-        maskNet = load_model("mask_detector2.model")
+        maskNet = load_model("mask_detector5.model")
 
         print("Starting Video...")
         cap = cv.VideoCapture(0)
