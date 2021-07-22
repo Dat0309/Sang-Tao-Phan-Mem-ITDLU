@@ -67,6 +67,7 @@ baseModel = MobileNetV2(weights="imagenet", include_top=False, input_tensor=Inpu
 headModel = baseModel.output
 headModel = AveragePooling2D(pool_size=(7,7))(headModel)
 headModel = Flatten(name="flatten")(headModel)
+headModel = Dense(512, activation="relu")(headModel)
 #headModel = Dropout(0.5)(headModel)
 headModel = Dense(128, activation="relu")(headModel)
 headModel = Dropout(0.5)(headModel)
@@ -108,7 +109,7 @@ print(classification_report(testY.argmax(axis=1), predIdxs,
 
 # serialize the model to disk
 print("[INFO] saving mask detector model...")
-model.save("mask_detector5.model", save_format="h5")
+model.save("mask_detector6.model", save_format="h5")
 
 # plot the training loss and accuracy
 N = EPOCHS
@@ -122,5 +123,5 @@ plt.title("Training Loss and Accuracy")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
 plt.legend(loc="lower left")
-plt.savefig("plot5.png")
+plt.savefig("plot6.png")
 
