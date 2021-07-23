@@ -50,7 +50,7 @@ prototxt_path = r"face_detector\deploy.prototxt"
 weightPath = r"face_detector\res10_300x300_ssd_iter_140000.caffemodel"
 faceNet = cv.dnn.readNet(prototxt_path, weightPath)
 
-maskNet = load_model("mask_detector5.model")
+maskNet = load_model("mask_detector6.model")
 
 print("Starting video...")
 cap = cv.VideoCapture(0)
