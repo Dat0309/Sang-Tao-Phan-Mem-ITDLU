@@ -8,6 +8,7 @@ from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
 import numpy as np
 import cv2 as cv
+import voice
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -87,7 +88,7 @@ class MainWindow(QtWidgets.QMainWindow):
         weightPath = r"face_detector\res10_300x300_ssd_iter_140000.caffemodel"
         faceNet = cv.dnn.readNet(prototxt_path, weightPath)
 
-        maskNet = load_model("mask_detector5.model")
+        maskNet = load_model("mask_detector6.model")
 
         print("Starting Video...")
         cap = cv.VideoCapture(0)
@@ -102,22 +103,27 @@ class MainWindow(QtWidgets.QMainWindow):
                 (mask, withoutMask) = pred
 
                 label = "Mask" if mask > withoutMask else "No Mask"
+
                 color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
 
                 label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
 
                 cv.putText(frame, label, (startX, startY - 10), cv.FONT_HERSHEY_COMPLEX, 0.45,color, 2)
                 cv.rectangle(frame, (startX, startY), (endX, endY), color, 2)
+                
+                if withoutMask > mask:
+                    voice.speak("Đeo Khẩu trang vào")
 
             if ret == True:
                 self.displayImage(frame, 1)
 
                 if (self.logic==2):
+                    self.logic = 1
                     break
                     # self.value = self.value + 1
                     # cv.imwrite('%s.png'%(self.value), frame)
 
-                    # self.logic = 1
+
                 
                 if cv.waitKey(1) & 0xFF == ord('q'):
                     break
