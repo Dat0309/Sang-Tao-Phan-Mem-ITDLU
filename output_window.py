@@ -1,4 +1,6 @@
 import re
+
+from numpy.lib.npyio import save
 from main_window import Ui_MainWindow
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys, icons
@@ -8,6 +10,7 @@ from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
 import numpy as np
 import cv2 as cv
+import os
 import voice
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -28,6 +31,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.widget_main.hide()
         self.logic = 0
         self.value = 1
+        self.new_path = 'C:/Users/ADMIN/Face_mask_detect_Dat/Test_model/'
 
         self.ui.show_main.clicked.connect(self.show_video)
         self.ui.cap_main.clicked.connect(self.cap_video)
@@ -82,6 +86,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def homeButton(self):
         self.ui.widget_main.hide()
         self.ui.widget.show()
+
+    def savePic(self, img, box, width=224, height=224):
+        self.value += 1
+        x, y, w, h = box
+        imgCrop = img[y:h, x:w]
+        imgCrop = cv.resize(imgCrop, (width, height))
+        cv.imwrite(self.new_path + '%s.png'%(self.value), imgCrop)
         
     def show_video(self):
         prototxt_path = r"face_detector\deploy.prototxt"
@@ -112,7 +123,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 cv.rectangle(frame, (startX, startY), (endX, endY), color, 2)
                 
                 if withoutMask > mask:
-                    voice.speak("Đeo Khẩu trang vào")
+                    self.savePic(frame, box)
+                    voice.speak("Hãy Đeo Khẩu trang")
 
             if ret == True:
                 self.displayImage(frame, 1)
