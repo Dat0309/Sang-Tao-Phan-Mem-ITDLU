@@ -11,7 +11,11 @@ from tensorflow.keras.models import load_model
 import numpy as np
 import cv2 as cv
 import os
-import voice
+from pygame import mixer
+import time
+
+mixer.init()
+sound = mixer.Sound('alarm.wav')
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -31,6 +35,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.widget_main.hide()
         self.logic = 0
         self.value = 1
+        self.score = 0
         self.new_path = 'C:/Users/ADMIN/Face_mask_detect_Dat/Test_model/'
 
         self.ui.show_main.clicked.connect(self.show_video)
@@ -99,7 +104,7 @@ class MainWindow(QtWidgets.QMainWindow):
         weightPath = r"face_detector\res10_300x300_ssd_iter_140000.caffemodel"
         faceNet = cv.dnn.readNet(prototxt_path, weightPath)
 
-        maskNet = load_model("mask_detector6.model")
+        maskNet = load_model("mask_detector5.model")
 
         print("Starting Video...")
         cap = cv.VideoCapture(0)
@@ -113,7 +118,15 @@ class MainWindow(QtWidgets.QMainWindow):
                 (startX, startY, endX, endY) = box
                 (mask, withoutMask) = pred
 
-                label = "Mask" if mask > withoutMask else "No Mask"
+                #label = "Mask" if mask > withoutMask else "No Mask"
+
+                if mask > withoutMask:
+                    label = "Mask"
+                    self.score = 0
+                else:
+                    label = "No mask" 
+                    self.score = 1
+                    
 
                 color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
 
@@ -122,9 +135,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 cv.putText(frame, label, (startX, startY - 10), cv.FONT_HERSHEY_COMPLEX, 0.45,color, 2)
                 cv.rectangle(frame, (startX, startY), (endX, endY), color, 2)
                 
-                if withoutMask > mask:
-                    self.savePic(frame, box)
-                    voice.speak("Hãy Đeo Khẩu trang")
+            if self.score==1:
+                self.savePic(frame, box)
+                try:
+                    sound.play()
+                    #time.sleep(1)
+                except:
+                    pass
 
             if ret == True:
                 self.displayImage(frame, 1)
