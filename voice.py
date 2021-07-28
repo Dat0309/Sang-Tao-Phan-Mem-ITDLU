@@ -4,8 +4,8 @@ import playsound
 
 def speak(text):
     tts = gTTS(text = text, lang = 'vi')
-    filename = 'voice.wav'
+    filename = 'wanning.wav'
     tts.save(filename)
     playsound.playsound(filename)
 
-# speak("Đeo khẩu trang")
+speak("Cảnh báo không đeo khẩu trang")

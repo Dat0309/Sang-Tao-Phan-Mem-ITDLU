@@ -1,10 +1,7 @@
+from sys import maxsize
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.applications import MobileNetV2
-from tensorflow.keras.layers import AveragePooling2D
-from tensorflow.keras.layers import Dropout
-from tensorflow.keras.layers import Flatten
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.layers import Input
+from tensorflow.keras.layers import AveragePooling2D, Dropout, Flatten, Dense, Input
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
@@ -14,7 +11,6 @@ from tensorflow.keras.utils import to_categorical
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
-from tensorflow.python.ops.gen_nn_ops import Conv2D
 from imutils import paths
 import matplotlib.pyplot as plt
 import numpy as np
@@ -67,8 +63,6 @@ baseModel = MobileNetV2(weights="imagenet", include_top=False, input_tensor=Inpu
 headModel = baseModel.output
 headModel = AveragePooling2D(pool_size=(7,7))(headModel)
 headModel = Flatten(name="flatten")(headModel)
-headModel = Dense(512, activation="relu")(headModel)
-headModel = Dense(256, activation="relu")(headModel)
 #headModel = Dropout(0.5)(headModel)
 headModel = Dense(128, activation="relu")(headModel)
 headModel = Dropout(0.5)(headModel)
@@ -76,19 +70,23 @@ headModel = Dense(2, activation="softmax")(headModel)
 
 model = Model(inputs=baseModel.input, outputs=headModel)
 
+print(model.summary())
+
 # loop over all layers in the base model and freeze them so they will
 # *not* be updated during the first training process
 for layer in baseModel.layers:
 	layer.trainable = False
 
 # compile our model
-print("[INFO] compiling model...")
+print("compiling model...")
+
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
 model.compile(loss="binary_crossentropy", optimizer=opt,
 	metrics=["accuracy"])
 
 # train the head of the network
-print("[INFO] training head...")
+print("training head...")
+
 H = model.fit(
 	aug.flow(trainX, trainY, batch_size=BS),
 	steps_per_epoch=len(trainX) // BS,
@@ -97,7 +95,8 @@ H = model.fit(
 	epochs=EPOCHS)
 
 # make predictions on the testing set
-print("[INFO] evaluating network...")
+print("evaluating network...")
+
 predIdxs = model.predict(testX, batch_size=BS)
 
 # for each image in the testing set we need to find the index of the
@@ -110,7 +109,7 @@ print(classification_report(testY.argmax(axis=1), predIdxs,
 
 # serialize the model to disk
 print("[INFO] saving mask detector model...")
-model.save("mask_detector6.model", save_format="h5")
+model.save("mask_detector7.model", save_format="h5")
 
 # plot the training loss and accuracy
 N = EPOCHS
@@ -124,5 +123,5 @@ plt.title("Training Loss and Accuracy")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
 plt.legend(loc="lower left")
-plt.savefig("plot6.png")
+plt.savefig("plot7.png")
 

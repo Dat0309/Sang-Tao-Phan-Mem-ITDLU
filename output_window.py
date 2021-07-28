@@ -12,10 +12,11 @@ import numpy as np
 import cv2 as cv
 import os
 from pygame import mixer
-import time
 
 mixer.init()
 sound = mixer.Sound('alarm.wav')
+
+
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -104,7 +105,7 @@ class MainWindow(QtWidgets.QMainWindow):
         weightPath = r"face_detector\res10_300x300_ssd_iter_140000.caffemodel"
         faceNet = cv.dnn.readNet(prototxt_path, weightPath)
 
-        maskNet = load_model("mask_detector5.model")
+        maskNet = load_model("mask_detector6.model")
 
         print("Starting Video...")
         cap = cv.VideoCapture(0)
