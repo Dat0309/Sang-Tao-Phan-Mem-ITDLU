@@ -48,6 +48,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.exitBtn.clicked.connect(self.close)
         self.ui.showBtn.clicked.connect(self.showButton)
         self.ui.homeBtn.clicked.connect(self.homeButton)
+        self.ui.capBtn.clicked.connect(self.fileOpen)
 
         def moveWindow(e):
             if self.isMaximized() == False:
@@ -99,6 +100,15 @@ class MainWindow(QtWidgets.QMainWindow):
         imgCrop = img[y:h, x:w]
         imgCrop = cv.resize(imgCrop, (width, height))
         cv.imwrite(self.new_path + '%s.png'%(self.value), imgCrop)
+
+    def fileOpen(self):
+        fr = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', r'C:\Users\ADMIN\Face_mask_detect_Dat\Test_model', 'PNG files (*.png)')
+        print(fr[0])
+
+        img = cv.imread(fr[0])
+        cv.imshow("img", img)
+        cv.waitKey(0)
+        cv.destroyAllWindows()
         
     def show_video(self):
         prototxt_path = r"face_detector\deploy.prototxt"

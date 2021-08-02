@@ -7,33 +7,39 @@ class Ui_Form(object):
         Form.resize(659, 614)
         Form.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         Form.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
         self.widget = QtWidgets.QWidget(Form)
         self.widget.setGeometry(QtCore.QRect(30, 30, 591, 500))
         self.widget.setStyleSheet("")
         self.widget.setObjectName("widget")
+
         self.label = QtWidgets.QLabel(self.widget)
         self.label.setGeometry(QtCore.QRect(40, 30, 280, 430))
         self.label.setStyleSheet("border-image: url(:/images/mask2.jpg);\n"
 "border-top-left-radius:50px")
         self.label.setText("")
         self.label.setObjectName("label")
+
         self.label_2 = QtWidgets.QLabel(self.widget)
         self.label_2.setGeometry(QtCore.QRect(40, 30, 280, 430))
         self.label_2.setStyleSheet("background-color:rgba(0,0,0,80);\n"
 "border-top-left-radius:50px;")
         self.label_2.setText("")
         self.label_2.setObjectName("label_2")
+
         self.label_3 = QtWidgets.QLabel(self.widget)
         self.label_3.setGeometry(QtCore.QRect(310, 30, 240, 430))
         self.label_3.setStyleSheet("background-color:rgba(255,255,255,255);\n"
 "border-bottom-right-radius:50px;")
         self.label_3.setText("")
         self.label_3.setObjectName("label_3")
+
         self.label_5 = QtWidgets.QLabel(self.widget)
         self.label_5.setGeometry(QtCore.QRect(40, 70, 271, 101))
         self.label_5.setStyleSheet("background-color:rgba(50,50,50,50);")
         self.label_5.setText("")
         self.label_5.setObjectName("label_5")
+
         self.label_6 = QtWidgets.QLabel(self.widget)
         self.label_6.setGeometry(QtCore.QRect(70, 70, 151, 41))
         font = QtGui.QFont()
@@ -43,6 +49,7 @@ class Ui_Form(object):
         self.label_6.setFont(font)
         self.label_6.setStyleSheet("color:rgba(225,225,225,225);")
         self.label_6.setObjectName("label_6")
+
         self.label_7 = QtWidgets.QLabel(self.widget)
         self.label_7.setGeometry(QtCore.QRect(180, 100, 110, 41))
         font = QtGui.QFont()
@@ -52,6 +59,7 @@ class Ui_Form(object):
         self.label_7.setFont(font)
         self.label_7.setStyleSheet("color:rgba(225,225,225,225);")
         self.label_7.setObjectName("label_7")
+
         self.widget_2 = QtWidgets.QWidget(self.widget)
         self.widget_2.setGeometry(QtCore.QRect(310, 30, 240, 430))
         self.widget_2.setStyleSheet("QPushButton#creBtn{\n"
@@ -83,6 +91,7 @@ class Ui_Form(object):
 "}\n"
 "border-bottom-right-radius:50px;")
         self.widget_2.setObjectName("widget_2")
+
         self.userCreate = QtWidgets.QLineEdit(self.widget_2)
         self.userCreate.setGeometry(QtCore.QRect(20, 90, 190, 40))
         font = QtGui.QFont()
@@ -94,6 +103,7 @@ class Ui_Form(object):
 "color:rgba(0,0,0,240);\n"
 "padding-bottom:7px;")
         self.userCreate.setObjectName("userCreate")
+
         self.passCreate = QtWidgets.QLineEdit(self.widget_2)
         self.passCreate.setGeometry(QtCore.QRect(20, 160, 190, 40))
         font = QtGui.QFont()
@@ -106,6 +116,7 @@ class Ui_Form(object):
 "padding-bottom:7px;")
         self.passCreate.setEchoMode(QtWidgets.QLineEdit.Password)
         self.passCreate.setObjectName("passCreate")
+
         self.creBtn = QtWidgets.QPushButton(self.widget_2)
         self.creBtn.setGeometry(QtCore.QRect(30, 330, 171, 41))
         font = QtGui.QFont()
@@ -114,6 +125,7 @@ class Ui_Form(object):
         font.setWeight(75)
         self.creBtn.setFont(font)
         self.creBtn.setObjectName("creBtn")
+
         self.label_8 = QtWidgets.QLabel(self.widget_2)
         self.label_8.setGeometry(QtCore.QRect(80, 50, 100, 40))
         font = QtGui.QFont()
@@ -123,6 +135,7 @@ class Ui_Form(object):
         self.label_8.setFont(font)
         self.label_8.setStyleSheet("color:rgba(0,0,0,200);")
         self.label_8.setObjectName("label_8")
+
         self.hideBtn = QtWidgets.QPushButton(self.widget_2)
         self.hideBtn.setGeometry(QtCore.QRect(0, 0, 41, 41))
         font = QtGui.QFont()
@@ -134,6 +147,7 @@ class Ui_Form(object):
 "border-top-right-radius:15px;\n"
 "border-bottom-right-radius:15px;")
         self.hideBtn.setObjectName("hideBtn")
+
         self.cpassCreate = QtWidgets.QLineEdit(self.widget_2)
         self.cpassCreate.setGeometry(QtCore.QRect(20, 230, 190, 40))
         font = QtGui.QFont()
@@ -146,6 +160,7 @@ class Ui_Form(object):
 "padding-bottom:7px;")
         self.cpassCreate.setEchoMode(QtWidgets.QLineEdit.Password)
         self.cpassCreate.setObjectName("cpassCreate")
+
         self.widget_3 = QtWidgets.QWidget(self.label_3)
         self.widget_3.setGeometry(QtCore.QRect(0, 0, 240, 430))
         self.widget_3.setStyleSheet("\n"
@@ -178,6 +193,7 @@ class Ui_Form(object):
 "}\n"
 "border-bottom-right-radius:50px;")
         self.widget_3.setObjectName("widget_3")
+
         self.label_9 = QtWidgets.QLabel(self.widget_3)
         self.label_9.setGeometry(QtCore.QRect(80, 50, 80, 40))
         font = QtGui.QFont()
@@ -187,6 +203,7 @@ class Ui_Form(object):
         self.label_9.setFont(font)
         self.label_9.setStyleSheet("color:rgba(0,0,0,200);")
         self.label_9.setObjectName("label_9")
+
         self.userLogin = QtWidgets.QLineEdit(self.widget_3)
         self.userLogin.setGeometry(QtCore.QRect(20, 90, 190, 40))
         font = QtGui.QFont()
@@ -198,6 +215,7 @@ class Ui_Form(object):
 "color:rgba(0,0,0,240);\n"
 "padding-bottom:7px;")
         self.userLogin.setObjectName("userLogin")
+
         self.passLogin = QtWidgets.QLineEdit(self.widget_3)
         self.passLogin.setGeometry(QtCore.QRect(20, 160, 190, 40))
         font = QtGui.QFont()
@@ -210,6 +228,7 @@ class Ui_Form(object):
 "padding-bottom:7px;")
         self.passLogin.setEchoMode(QtWidgets.QLineEdit.Password)
         self.passLogin.setObjectName("passLogin")
+        
         self.loginBtn = QtWidgets.QPushButton(self.widget_3)
         self.loginBtn.setGeometry(QtCore.QRect(30, 240, 171, 41))
         font = QtGui.QFont()

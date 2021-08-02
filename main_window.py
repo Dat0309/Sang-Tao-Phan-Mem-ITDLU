@@ -712,7 +712,7 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "Facemask Detect"))
         self.homeBtn.setText(_translate("MainWindow", "Home"))
         self.showBtn.setText(_translate("MainWindow", "Show"))
-        self.capBtn.setText(_translate("MainWindow", "Capture"))
+        self.capBtn.setText(_translate("MainWindow", "Picture"))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page), _translate("MainWindow", "Tool"))
         self.subMenu1.setText(_translate("MainWindow", "Sub Menu"))
         self.subMenu2.setText(_translate("MainWindow", "Sub Menu"))
