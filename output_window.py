@@ -33,7 +33,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.show()
 
-        self.ui.widget_main.hide()
+        self.ui.widget_main.show()
         self.logic = 0
         self.value = 1
         self.score = 0
@@ -47,7 +47,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.xBtn.clicked.connect(self.close)
         self.ui.exitBtn.clicked.connect(self.close)
         self.ui.showBtn.clicked.connect(self.showButton)
-        self.ui.homeBtn.clicked.connect(self.homeButton)
+        # self.ui.homeBtn.clicked.connect(self.homeButton)
         self.ui.capBtn.clicked.connect(self.fileOpen)
 
         def moveWindow(e):
@@ -87,7 +87,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.animation.start()
 
     def showButton(self):
-        self.ui.widget.hide()
+        # self.ui.widget.hide()
         self.ui.widget_main.show()
 
     def homeButton(self):
@@ -102,13 +102,16 @@ class MainWindow(QtWidgets.QMainWindow):
         cv.imwrite(self.new_path + '%s.png'%(self.value), imgCrop)
 
     def fileOpen(self):
-        fr = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', r'C:\Users\ADMIN\Face_mask_detect_Dat\Test_model', 'PNG files (*.png)')
-        print(fr[0])
+        try:
+            fr = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', r'C:\Users\ADMIN\Face_mask_detect_Dat\Test_model', 'PNG files (*.png)')
+            print(fr[0])
 
-        img = cv.imread(fr[0])
-        cv.imshow("img", img)
-        cv.waitKey(0)
-        cv.destroyAllWindows()
+            img = cv.imread(fr[0])
+            cv.imshow("img", img)
+            cv.waitKey(0)
+            cv.destroyAllWindows()
+        except:
+            pass
         
     def show_video(self):
         prototxt_path = r"face_detector\deploy.prototxt"
