@@ -11,6 +11,4 @@ Trần Minh Cảnh <br/>
 
 
 ![image1](https://github.com/Dat0309/Sang-Tao-Phan-Mem-ITDLU/blob/main/LoginUipicture.png)
-![image2](https://github.com/Dat0309/Sang-Tao-Phan-Mem-ITDLU/blob/main/mainwindow_picture.png)
-![image3](https://github.com/Dat0309/Sang-Tao-Phan-Mem-ITDLU/blob/main/mainWindow_slideMenu.png)
 ![aimage4](https://github.com/Dat0309/Sang-Tao-Phan-Mem-ITDLU/blob/main/window_show.png)
