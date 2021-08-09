@@ -20,7 +20,7 @@ INIT_LR = 1e-4
 EPOCHS = 20
 BS = 32
 
-DIRECTORY = r"C:\Users\ADMIN\Face-Mask-Detection-master\Face-Mask-Detection-master\dataset"
+DIRECTORY = r"C:\Users\ADMIN\Face-Mask-Detection-master\dataset"
 CATEGORIES = ["with_mask", "without_mask"]
 
 print("[INFO] loading images...")
@@ -109,7 +109,7 @@ print(classification_report(testY.argmax(axis=1), predIdxs,
 
 # serialize the model to disk
 print("[INFO] saving mask detector model...")
-model.save("mask_detector7.model", save_format="h5")
+model.save("mask_detector8.model", save_format="h5")
 
 # plot the training loss and accuracy
 N = EPOCHS

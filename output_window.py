@@ -122,6 +122,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         print("Starting Video...")
         cap = cv.VideoCapture(0)
+        # cap = cv.VideoCapture(r'C:\Users\ADMIN\Face_mask_detect_Dat\Test_model\nomask.mp4')
 
         while True:
             ret, frame = cap.read()
