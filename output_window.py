@@ -151,6 +151,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 cv.rectangle(frame, (startX, startY), (endX, endY), color, 2)
                 
             if self.score==1:
+                self.score=0
                 self.savePic(frame, box)
                 try:
                     sound.play()

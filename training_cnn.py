@@ -109,7 +109,7 @@ print(classification_report(testY.argmax(axis=1), predIdxs,
 
 # serialize the model to disk
 print("[INFO] saving mask detector model...")
-model.save("mask_detector8.model", save_format="h5")
+model.save("mask_detector9.model", save_format="h5")
 
 # plot the training loss and accuracy
 N = EPOCHS
@@ -123,5 +123,5 @@ plt.title("Training Loss and Accuracy")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
 plt.legend(loc="lower left")
-plt.savefig("plot7.png")
+plt.savefig("plot9.png")
 

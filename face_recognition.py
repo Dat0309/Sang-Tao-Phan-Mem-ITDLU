@@ -9,7 +9,7 @@ people = os.listdir(DIR)
 face_recognizer = cv.face.LBPHFaceRecognizer_create()
 face_recognizer.read('faceRecog_model.yml')
 
-img = cv.imread(r'C:\Users\ADMIN\Face_mask_detect_Dat\Test_model\42.png')
+img = cv.imread(r'C:\Users\ADMIN\Face_mask_detect_Dat\Test_model\250.png')
 
 # cv.imshow('person', gray)
 gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
