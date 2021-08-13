@@ -11,4 +11,13 @@ Trần Minh Cảnh <br/>
 
 
 ![image1](https://github.com/Dat0309/Sang-Tao-Phan-Mem-ITDLU/blob/main/LoginUipicture.png)
-![aimage4](https://github.com/Dat0309/Sang-Tao-Phan-Mem-ITDLU/blob/main/window_show.png)
+![image4](https://github.com/Dat0309/Sang-Tao-Phan-Mem-ITDLU/blob/main/window.png)
+![image4](https://github.com/Dat0309/Sang-Tao-Phan-Mem-ITDLU/blob/main/window2.png)
+![image4](https://github.com/Dat0309/Sang-Tao-Phan-Mem-ITDLU/blob/main/mainwindow_picture.png)
+### Model trong lần đầu training
+![image4](https://github.com/Dat0309/Sang-Tao-Phan-Mem-ITDLU/blob/main/plot.png)
+### Model trong lần training thứ 6
+![image4](https://github.com/Dat0309/Sang-Tao-Phan-Mem-ITDLU/blob/main/plot5.png)
+### Chức năng chụp lại khuôn mặt không đeo khẩu trang trên Webcam và Video mp4
+![image4](https://github.com/Dat0309/Sang-Tao-Phan-Mem-ITDLU/blob/main/test_model2.png)
+![image4](https://github.com/Dat0309/Sang-Tao-Phan-Mem-ITDLU/blob/main/test_model1.png)
