@@ -63,7 +63,7 @@ baseModel = MobileNetV2(weights="imagenet", include_top=False, input_tensor=Inpu
 headModel = baseModel.output
 headModel = AveragePooling2D(pool_size=(7,7))(headModel)
 headModel = Flatten(name="flatten")(headModel)
-#headModel = Dropout(0.5)(headModel)
+headModel = Dropout(0.5)(headModel)
 headModel = Dense(128, activation="relu")(headModel)
 headModel = Dropout(0.5)(headModel)
 headModel = Dense(2, activation="softmax")(headModel)
