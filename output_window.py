@@ -13,10 +13,12 @@ import cv2 as cv
 import os
 from pygame import mixer
 
+'''
+Đọc file âm thanh bằng pygame.mixer
+'''
+
 mixer.init()
 sound = mixer.Sound('alarm.wav')
-
-
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -39,6 +41,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.score = 0
         self.new_path = 'C:/Users/ADMIN/Face_mask_detect_Dat/Test_model/'
 
+        '''
+        Event Function
+        '''
         self.ui.show_main.clicked.connect(self.show_video)
         self.ui.cap_main.clicked.connect(self.cap_video)
         self.ui.menuBtn.clicked.connect(self.showMenubar)
@@ -50,6 +55,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # self.ui.homeBtn.clicked.connect(self.homeButton)
         self.ui.capBtn.clicked.connect(self.fileOpen)
 
+        # Move windows with mouse
         def moveWindow(e):
             if self.isMaximized() == False:
                 if e.buttons() == QtCore.Qt.LeftButton:
@@ -58,6 +64,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     e.accept()
                 
         self.ui.headerFrame.mouseMoveEvent = moveWindow
+
 
     def mousePressEvent(self, event):
         self.clickPosition = event.globalPos()
@@ -86,6 +93,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.animation.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
         self.animation.start()
 
+    '''
+    define all function.
+    '''
     def showButton(self):
         # self.ui.widget.hide()
         self.ui.widget_main.show()
@@ -94,6 +104,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.widget_main.hide()
         self.ui.widget.show()
 
+    '''
+        # Chức năng lưu ảnh khuôn mặt
+    '''
     def savePic(self, img, box, width=224, height=224):
         self.value += 1
         x, y, w, h = box
@@ -101,6 +114,9 @@ class MainWindow(QtWidgets.QMainWindow):
         imgCrop = cv.resize(imgCrop, (width, height))
         cv.imwrite(self.new_path + '%s.png'%(self.value), imgCrop)
 
+    '''
+        # Chức năng mở file ảnh khuôn mặt và hiển thị lên màn hình bằng openCv
+    '''
     def fileOpen(self):
         try:
             fr = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', r'C:\Users\ADMIN\Face_mask_detect_Dat\Test_model', 'PNG files (*.png)')
@@ -112,15 +128,21 @@ class MainWindow(QtWidgets.QMainWindow):
             cv.destroyAllWindows()
         except:
             pass
-        
+    
+    '''
+        # Chức năng phát Video/ Video stream trên màn hình ứng dụng
+    '''
     def show_video(self):
         prototxt_path = r"face_detector\deploy.prototxt"
         weightPath = r"face_detector\res10_300x300_ssd_iter_140000.caffemodel"
         faceNet = cv.dnn.readNet(prototxt_path, weightPath)
 
+        # load model phân loại khuôn mặt
         maskNet = load_model("mask_detector6.model")
 
         print("Starting Video...")
+
+        # Lấy video đầu vào.
         cap = cv.VideoCapture(0)
         # cap = cv.VideoCapture(r'C:\Users\ADMIN\Face_mask_detect_Dat\Test_model\video_test.mp4')
 
@@ -179,6 +201,9 @@ class MainWindow(QtWidgets.QMainWindow):
         cap.release()
         cv.destroyAllWindows()
 
+    '''
+    Hiển thị Video lên Pixmap 
+    '''
     def displayImage(self, img, window = 1):
         qformat = QtGui.QImage.Format_Indexed8
 
@@ -199,6 +224,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def cap_video(self):
         self.logic = 2
 
+    '''
+    Phát hiện khuôn mặt đeo khẩu trang hoặc không
+    '''
     def detect_predict_mask(self, frame, faceNet, maskNet):
         (h, w) = frame.shape[:2]
         blob = cv.dnn.blobFromImage(frame, 1.0, (224, 224), (104.0, 177.0, 123.0))
