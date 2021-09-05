@@ -203,7 +203,7 @@ background-color:rgba(30,30,30,30);</string>
                   <x>0</x>
                   <y>0</y>
                   <width>214</width>
-                  <height>623</height>
+                  <height>606</height>
                  </rect>
                 </property>
                 <property name="font">
@@ -976,6 +976,53 @@ QPushButton#bellBtn:pressed{
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_10">
+          <item>
+           <widget class="QWidget" name="widget_face_rec" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout_11">
+             <item alignment="Qt::AlignLeft|Qt::AlignTop">
+              <widget class="QLabel" name="lb_imgIn">
+               <property name="minimumSize">
+                <size>
+                 <width>224</width>
+                 <height>224</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item alignment="Qt::AlignTop">
+              <widget class="QLabel" name="lbName">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="lb_imgOut">
+               <property name="minimumSize">
+                <size>
+                 <width>500</width>
+                 <height>500</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item alignment="Qt::AlignBottom">

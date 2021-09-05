@@ -1,5 +1,6 @@
-import re
 
+import re
+import face_recognition
 from numpy.lib.npyio import save
 from main_window import Ui_MainWindow
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -35,6 +36,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.show()
 
+        self.ui.widget_face_rec.hide()
         self.ui.widget_main.show()
         self.logic = 0
         self.value = 1
@@ -54,6 +56,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.showBtn.clicked.connect(self.showButton)
         # self.ui.homeBtn.clicked.connect(self.homeButton)
         self.ui.capBtn.clicked.connect(self.fileOpen)
+        self.ui.subMenu1.clicked.connect(self.face_rec)
 
         # Move windows with mouse
         def moveWindow(e):
@@ -98,11 +101,106 @@ class MainWindow(QtWidgets.QMainWindow):
     '''
     def showButton(self):
         # self.ui.widget.hide()
+        self.ui.widget_face_rec.hide()
         self.ui.widget_main.show()
+        
 
     def homeButton(self):
         self.ui.widget_main.hide()
         self.ui.widget.show()
+
+    '''
+        Chức năng nhận diện khuôn mặt không đeo khẩu trang đã lưu
+    '''
+    def face_rec(self):
+        self.cap_video()
+        self.ui.widget_main.hide()
+        self.ui.widget_face_rec.show()
+        try:
+            fr = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', r'C:\Users\ADMIN\Face_mask_detect_Dat\Test_model', 'PNG files (*.png)')
+            img = cv.imread(fr[0])
+
+            self.displayPictureIn(img,1)
+            self.face_recog(fr[0])
+        except:
+            pass
+
+    def displayPictureIn(self, img, window = 1):
+        qformat = QtGui.QImage.Format_Indexed8
+
+        if len(img.shape) == 3:
+            if(img.shape[2]) == 4:
+                qformat = QtGui.QImage.Format_RGBA888
+            else:
+                qformat = QtGui.QImage.Format_RGB888
+
+        img = QtGui.QImage(img, img.shape[1], img.shape[0], qformat)
+        img = img.rgbSwapped()
+        self.ui.lb_imgIn.setPixmap(QtGui.QPixmap.fromImage(img))
+        self.ui.lb_imgIn.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+
+    def displayPictureOut(self, img, window = 1):
+        qformat = QtGui.QImage.Format_Indexed8
+
+        if len(img.shape) == 3:
+            if(img.shape[2]) == 4:
+                qformat = QtGui.QImage.Format_RGBA888
+            else:
+                qformat = QtGui.QImage.Format_RGB888
+
+        img = QtGui.QImage(img, img.shape[1], img.shape[0], qformat)
+        img = img.rgbSwapped()
+        self.ui.lb_imgOut.setPixmap(QtGui.QPixmap.fromImage(img))
+        self.ui.lb_imgOut.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+
+    def face_recog(self, picture):
+        frame = cv.imread(picture)
+        path = r'C:\Users\ADMIN\Face_mask_detect_Dat\face'
+        if not os.path.exists(path):
+            os.mkdir(path)
+
+        # Xác nhận các khuôn mặt và tên
+        images = []
+        class_names = []
+        encode_list = []
+
+        PEOPLE = os.listdir(path)
+
+        # print(PEOPLE)
+        for face in PEOPLE:
+            cur_img = cv.imread(f'{path}/{face}')
+            images.append(cur_img)
+            class_names.append(os.path.splitext(face)[0])
+
+        for img in images:
+            img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
+            boxes = face_recognition.face_locations(img)
+            encode_cur_frame = face_recognition.face_encodings(img, boxes)[0]
+            encode_list.append(encode_cur_frame)
+
+        # print(images)
+        # print(class_names)
+        # print(encode_list)
+
+        faces_cur_frame = face_recognition.face_locations(frame)
+        encode_cur_frame = face_recognition.face_encodings(frame, faces_cur_frame)
+
+        for encodeFace, faceLoc in zip(encode_cur_frame, faces_cur_frame):
+            match = face_recognition.compare_faces(encode_list, encodeFace, tolerance=0.50)
+            face_dis = face_recognition.face_distance(encode_list, encodeFace)
+            name = 'unknown'
+            best_match_index = np.argmin(face_dis)
+
+            if match[best_match_index]:
+                name = class_names[best_match_index].upper()
+            if (name != 'unknown'):
+                # personName = name + '.jpg'
+                self.ui.lbName.setText(name)
+                # imgOut = cv.imread(f'{path}/{personName}')
+                # self.displayPictureOut(imgOut, 1)
+            else:
+                print('unknown')
+                self.ui.lbName.setText('unknown')
 
     '''
         # Chức năng lưu ảnh khuôn mặt
@@ -113,7 +211,6 @@ class MainWindow(QtWidgets.QMainWindow):
         imgCrop = img[y:h, x:w]
         imgCrop = cv.resize(imgCrop, (width, height))
         cv.imwrite(self.new_path + '%s.png'%(self.value), imgCrop)
-
     '''
         # Chức năng mở file ảnh khuôn mặt và hiển thị lên màn hình bằng openCv
     '''
@@ -128,7 +225,6 @@ class MainWindow(QtWidgets.QMainWindow):
             cv.destroyAllWindows()
         except:
             pass
-    
     '''
         # Chức năng phát Video/ Video stream trên màn hình ứng dụng
     '''
@@ -164,7 +260,6 @@ class MainWindow(QtWidgets.QMainWindow):
                     label = "No mask" 
                     self.score = 1
                     
-
                 color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
 
                 label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
@@ -190,14 +285,10 @@ class MainWindow(QtWidgets.QMainWindow):
                     # self.value = self.value + 1
                     # cv.imwrite('%s.png'%(self.value), frame)
 
-
-                
                 if cv.waitKey(1) & 0xFF == ord('q'):
-                    break
-                
+                    break   
             else:
                 print("return not found")
-
         cap.release()
         cv.destroyAllWindows()
 
@@ -210,7 +301,6 @@ class MainWindow(QtWidgets.QMainWindow):
         if len(img.shape) == 3:
             if(img.shape[2]) == 4:
                 qformat = QtGui.QImage.Format_RGBA888
-
             else:
                 qformat = QtGui.QImage.Format_RGB888
 
@@ -219,7 +309,6 @@ class MainWindow(QtWidgets.QMainWindow):
         #self.ui.label_4.setScaledContents(True)
         self.ui.label_4.setPixmap(QtGui.QPixmap.fromImage(img))
         self.ui.label_4.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
-
 
     def cap_video(self):
         self.logic = 2
@@ -266,7 +355,6 @@ class MainWindow(QtWidgets.QMainWindow):
             preds = maskNet.predict(faces, batch_size = 32)
 
         return (locs, preds)
-
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
